@@ -1,4 +1,4 @@
-(ns pik-weather-loader.db.weather
+(ns pik-weather-loader.db.weather-c
   (:require [hugsql.core :as hugsql]))
 
 
