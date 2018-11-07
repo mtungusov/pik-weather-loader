@@ -10,7 +10,10 @@
                  [mount "0.1.14"]
                  [com.layerware/hugsql "0.4.9"]
                  [net.sourceforge.jtds/jtds "1.3.1"]
-                 [org.clojure/java.jdbc "0.7.8"]]
+                 [org.clojure/java.jdbc "0.7.8"]
+                 [http-kit "2.3.0"]
+                 [metosin/jsonista "0.2.2"]
+                 [clj-time "0.15.1"]]
 
   :main pik-weather-loader.core
   :profiles {:uberjar {:omit-source true
