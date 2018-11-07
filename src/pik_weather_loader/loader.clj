@@ -2,7 +2,8 @@
   (:require [clojure.java.jdbc :refer [with-db-transaction]]
             [pik-weather-loader.db :refer [db-tableau db-weather]]
             [pik-weather-loader.db.tableau :as nsi]
-            [pik-weather-loader.db.weather-c :as weather-c]))
+            [pik-weather-loader.db.weather-c :as weather-c]
+            [pik-weather-loader.db.weather-q :as weather-q]))
 
 
 (defn update-projects []
@@ -16,3 +17,5 @@
 ;(nsi/projects db-tableau)
 ;(weather-c/disable-projects! db-weather)
 ;(update-projects)
+
+;(class (:lat (first (weather-q/projects db-weather))))
