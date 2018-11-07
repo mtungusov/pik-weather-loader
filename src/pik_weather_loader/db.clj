@@ -1,7 +1,6 @@
 (ns pik-weather-loader.db
   (:require [mount.core :refer [defstate]]
-            [pik-weather-loader.config :refer [settings]]
-            [pik-weather-loader.db.tableau :as q]))
+            [pik-weather-loader.config :refer [settings]]))
 
 
 (defstate db-tableau
