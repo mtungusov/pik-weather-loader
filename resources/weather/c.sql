@@ -18,5 +18,5 @@ IF @@rowcount = 0
 
 -- :name weather! :! :n
 -- :doc Insert weather data from Yandex
-INSERT INTO weather_history (uid, obs_time, temp, condition, wind_speed, wind_gust, wind_dir, wind_pik, wind_pik_at, forecast)
-VALUES (:uid, :obs_time, :temp, :condition, :wind_speed, :wind_gust, :wind_dir, :wind_pik, :wind_pik_at, :forecast)
+INSERT INTO weather_history (uid, obs_time, temp, condition, wind_speed, wind_gust, wind_dir, forecast)
+VALUES (:uid, :obs_time, :temp, :condition, :wind_speed, :wind_gust, :wind_dir, :forecast)

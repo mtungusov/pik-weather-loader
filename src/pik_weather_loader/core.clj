@@ -8,7 +8,8 @@
 
 (defn -main [& args]
   (log/info "PIK Weather Loader")
-  (mount/start))
-  ;(loader/update-projects)
-  ;(log/info "Update Projects")
-  ;(process))
+  (mount/start)
+  (loader/update-projects)
+  (log/info "Update Projects")
+  (loader/load-forecasts)
+  (log/info "Load Forecasts from Yandex"))

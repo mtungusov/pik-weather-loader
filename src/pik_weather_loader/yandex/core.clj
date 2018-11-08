@@ -1,32 +1,31 @@
 (ns pik-weather-loader.yandex.core
   (:require [org.httpkit.client :as http]
             [clojure.tools.logging :as log]
+            [mount.core :refer [defstate]]
             [clj-time.core :as t]
             [clj-time.coerce :as tc]
             [pik-weather-loader.config :refer [settings]]
             [pik-weather-loader.utils :refer [from-json]]))
 
 
-(defn- token []
-  (get-in settings [:yandex :token]))
-
-
-(defn- api-url []
-  (get-in settings [:yandex :url]))
-
-
-(def default-params {:timeout 200
-                     :insecure? true
-                     :headers {"X-Yandex-API-Key" (token)}
-                     :query-params {:lang "en_US"
-                                    :limit 3
-                                    :extra true
-                                    :hours true}})
+(defstate api
+  :start
+  {:url (get-in settings [:yandex :url])
+   :default-params {:timeout 500
+                    :insecure? true
+                    :headers {"X-Yandex-API-Key" (get-in settings [:yandex :token])}
+                    :query-params {:lang "en_US"
+                                   :limit 3
+                                   :extra true
+                                   :hours true}}})
 
 
 (defn- params! [lat lon]
-  (update-in default-params [:query-params] #(merge % {:lat lat :lon lon})))
+  (-> (:default-params api)
+    (update-in [:query-params] #(merge % {:lat lat :lon lon}))))
 
+;(:default-params api)
+;(params! 1.0 2.0)
 
 (defn- weather-vals [v]
   {:temp (:temp v)
@@ -79,7 +78,7 @@
 
 (defn forecast [{:keys [uid lat lon]}]
   (let [params (params! lat lon)
-        resp (http/get (api-url) params)]
+        resp (http/get (:url api) params)]
     {:uid uid
      :resp resp}))
 
@@ -88,12 +87,12 @@
   (try
     (let [{:keys [status error body]} @resp]
       (if error
-        {:error "Network error"}
+        {:error (str "Network error:" error) :uid uid}
         (cond-> {:uid uid}
           (= 403 status) (assoc :error "API Authentication Error")
           (= 200 status) (merge (filter-body body)))))
     (catch Exception _
-      {:error "Process response from Yandex Error"})))
+      {:error "Process response from Yandex Error" :uid uid})))
 
 
 ;(def r (forecast {:lat 55.75396 :lon 37.620393 :uid "0001"}))
