@@ -9,12 +9,13 @@
 
 
 (defn update-projects []
-  (let [values (nsi/projects db-tableau)]
+  (let [values (nsi/projects db-tableau)
+        n (count values)]
     (with-db-transaction [tx db-weather]
       (weather-c/disable-projects! tx)
       (doseq [v values]
-        (weather-c/project! tx v)))))
-
+        (weather-c/project! tx v)))
+    (log/info "Updated " n "projects")))
 
 ;(nsi/projects db-tableau)
 ;(weather-c/disable-projects! db-weather)
@@ -39,7 +40,7 @@
 
 
 (defn- load-some-forecasts [projects]
-  (log/info "Load " (count projects) " forecasts")
+  (log/info "Load" (count projects) "forecasts")
   (doseq [p projects]
     (-> p
         (forecast)
@@ -47,10 +48,11 @@
 
 
 (defn load-forecasts []
-  (let [projects (weather-q/projects db-weather)]
+  (let [projects (weather-q/projects db-weather)
+        n (count projects)]
     (doseq [pp (partition-all 4 projects)]
-      (load-some-forecasts pp))))
-
+      (load-some-forecasts pp))
+    (log/info "Loaded forecasts for" n "projects")))
 ;(def t '(1 2 3 4 5 6 7))
 ;(partition-all 4 t)
 
