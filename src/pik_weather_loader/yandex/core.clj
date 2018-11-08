@@ -91,9 +91,9 @@
         {:error "Network error"}
         (cond-> {:uid uid}
           (= 403 status) (assoc :error "API Authentication Error")
-          (= 200 status) (assoc :body  (filter-body body)))))
+          (= 200 status) (merge (filter-body body)))))
     (catch Exception _
-      {:error (identity Exception)})))
+      {:error "Process response from Yandex Error"})))
 
 
 ;(def r (forecast {:lat 55.75396 :lon 37.620393 :uid "0001"}))
@@ -103,6 +103,8 @@
 ;@(:resp r)
 ;(update {:h1 (get-in t [:forecast :h1]) :h2 (get-in t [:forecast :h2])} :h1 weather-vals)
 ;(process-one r)
+;(filter-body "some")
+;(process-one {:uid "test01" :resp (assoc @(:resp r) :body "{}")})
 
 
 ;(api-url)
