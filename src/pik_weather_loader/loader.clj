@@ -5,7 +5,8 @@
             [pik-weather-loader.db.tableau :as nsi]
             [pik-weather-loader.db.weather-c :as weather-c]
             [pik-weather-loader.db.weather-q :as weather-q]
-            [pik-weather-loader.yandex.core :refer [forecast process-one]]))
+            [pik-weather-loader.yandex.core :refer [forecast process-one]]
+            [pik-weather-loader.influxdb.core :refer [write]]))
 
 
 (defn update-projects []
@@ -24,13 +25,23 @@
 ;(weather-q/projects db-weather)
 
 
-(defn- forecast-to-db [v]
-  (let [f (process-one v)
-        {:keys [error uid]} f]
-    (if error
-      (log/error (str "Process error: " error ", uid:" uid))
-      (weather-c/weather-to-db db-weather f))))
+(defn- write-metric [status value]
+  (let [data (format "request_count,api=yandex,status=%s value=%s" status value)]
+    (write data)))
 
+
+(defn- forecast-to-db [v]
+  (try
+    (let [f (process-one v)
+          {:keys [error uid]} f]
+      (if error
+        (log/error (str "Process error: " error ", uid:" uid))
+        (weather-c/weather-to-db db-weather f))
+      (if error
+        (write-metric "err" 1)
+        (write-metric "ok"  1)))
+    (catch Exception _
+      (write-metric "err" 1))))
 
 ;(defn load-forecasts []
 ;  (let [projects (weather-q/projects db-weather)
